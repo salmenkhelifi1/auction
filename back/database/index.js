@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("final", "root", "0000", {
+const sequelize = new Sequelize("final", "root", "Salmen12@", {
   host: "localhost",
   dialect: "mysql",
 });
@@ -18,6 +18,5 @@ sequelize
 //   })
 //   .catch((err) => {
 //     console.error("Error syncing database:", err);
-
 //   });
 module.exports = sequelize;
