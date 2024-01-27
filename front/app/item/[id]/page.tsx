@@ -13,11 +13,26 @@ const ItemDescrption = dynamic(
 );
 const ItemSidebar = dynamic(() => import("../(itemComponents)/itemSidebar"));
 import axios from "axios";
+import Chat from "../../chat/client/chat";
 
 const Item = ({ params }) => {
   console.log(params);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isChatboxOpen, setIsChatboxOpen] = useState(true);
+
+  const handleCloseChat = () => {
+    // Handle closing chat
+    setIsChatboxOpen(false);
+  };
+
+  const handleOpenChat = () => {
+    // Handle opening chat
+    setIsChatboxOpen(true);
+  };
+  const handleToggleChat = () => {
+    setIsChatboxOpen(!isChatboxOpen);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +96,13 @@ const Item = ({ params }) => {
           </div>
         </>
       )}
+      <>
+        <Chat
+          isChatboxOpen={isChatboxOpen}
+          handleCloseChat={handleCloseChat}
+          handleOpenChat={handleOpenChat}
+        />
+      </>
     </>
   );
 };

@@ -6,7 +6,6 @@
     "strict": false,
     "noEmit": true,
 
-
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -25,7 +24,10 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/firebase/firebase.js"
-, "app/404", "app/404/page.tsx"  ],
+    "app/firebase/firebase.js",
+    "app/404",
+    "app/404/page.tsx",
+    "app/chat/client/(chat)/chatButton.tsx"
+  ],
   "exclude": ["node_modules"]
 }

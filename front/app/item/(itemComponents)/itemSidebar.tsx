@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import "./style/itemSidebar.css";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +12,6 @@ import { RiAccountPinCircleFill } from "react-icons/ri";
 import { FaCircleArrowLeft } from "react-icons/fa6";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
-import Link from "next/link";
 import axios from "axios";
 const ItemSidebar = ({ items }) => {
   const [data, setData] = useState([]);
@@ -108,7 +108,7 @@ const ItemSidebar = ({ items }) => {
                   className="w-80 m-px  bg-red-500 text-white text-sm leading-6 font-bold py-2 px-4 rounded-lg hover:bg-red-700"
                 >
                   <MdMessage className="black-icon w-[20px] inline-block  mx-1" />
-                  Send Message
+                  <Link href="/chat/client/">Send Message</Link>
                 </button>
 
                 <button

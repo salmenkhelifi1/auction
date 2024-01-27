@@ -41,7 +41,11 @@ const ChatPage = () => {
   return (
     <>
       <div
-        className={isChatboxOpen ? "fixed bottom-16 right-4 w-96" : "hidden"}
+        className={
+          isChatboxOpen
+            ? "drop-shadow-xl fixed bottom-16 right-4 w-96"
+            : "hidden"
+        }
       >
         <div className="bg-white shadow-md rounded-lg max-w-lg w-full">
           <ChatHeader onClose={handleCloseChat} onToggle={handleToggleChat} />
