@@ -29,13 +29,13 @@ import React from "react";
 const ChatBody = ({ messages }) => {
   // Add a triggering message to the messages prop
   const updatedMessages = [
-    ...messages,
     { text: "This is a sent message", isBot: false },
     { text: "This is a received message", isBot: true },
+    ...messages,
   ];
 
   return (
-    <div className="p-4 h-80 overflow-y-auto">
+    <div className="p-4 h-80 overflow-y-auto scroll-smooth">
       {updatedMessages.map((message, index) => (
         <div
           key={index}

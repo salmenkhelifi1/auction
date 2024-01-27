@@ -32,7 +32,7 @@ const ChatInfoPanel = () => {
   };
 
   return (
-    <div className=" p-4 border-l  bg-gray-100 h-screen">
+    <div className=" p-4 border-l  bg-gray-100 h-screen overflow-y-scroll">
       <div className="flex flex-col items-center justify-center">
         <Avatar
           src={clientInfo.avatar}

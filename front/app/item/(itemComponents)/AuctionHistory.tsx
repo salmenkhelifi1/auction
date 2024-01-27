@@ -4,33 +4,18 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCircleArrowLeft, FaCircleArrowRight } from "react-icons/fa6";
 import "./style/auctionHistory.css";
+import Loading from "./loading";
 function AuctionHistory({ items }) {
-  const [data, setData] = useState([]);
-  const [visibleItems, setVisibleItems] = useState(10);
   const [bids, setBids] = useState([]);
   const [page, setPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  console.log("loading", loading);
   useEffect(() => {
-    fetchData();
-  }, [items, visibleItems, page]);
-  const fetchData = async () => {
-    try {
-      const requests = items
-        .slice(0, visibleItems)
-        .map((item) =>
-          axios.get(`http://localhost:5000/Seller/profile/${items.seller.id}`)
-        );
-
-      const responses = await Promise.all(requests);
-      const responseData = responses.map((response) => response.data);
-      setData(responseData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [items, visibleItems]);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, [bids]);
 
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString("en-US", {
@@ -47,21 +32,25 @@ function AuctionHistory({ items }) {
       .get(
         `http://localhost:5000/bid/fetch-items/BidsByItems/${items[0].id}?page=${page}`
       )
-      .then((r) => setBids((prev) => [...prev, ...r.data]))
-      .catch((err) => console.log(err));
-  }, [page]);
+      .then((r) => {
+        setBids((prev) => [...prev, ...r.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [page, items]);
 
   const handleLoadMore = () => {
-    // Increment the page when the "Load More" button is clicked
     setPages(page + 1);
     setBids([]);
   };
 
   const handleLoadBack = () => {
     if (page > 1) {
-      // Decrement the page when the "Back" button is clicked (if not on the first page)
       setPages((prevPage) => prevPage - 1);
-      // Clear the existing bids to display the previous page's bids
       setBids([]);
     }
   };
@@ -74,16 +63,25 @@ function AuctionHistory({ items }) {
             <td>{formatDateTime(items[0].timeStart)}</td>
             <td>{items.price} £</td>
           </tr>
-          {bids.map((el, index) => (
-            <tr key={index}>
-              <th>
-                {el?.Client.name} {el?.Client.lastName}
-              </th>
-              <td>{formatDateTime(el.updatedAt)}</td>
 
-              <td>{bids[index]?.bidAmount}$</td>
-            </tr>
-          ))}
+          {loading ? (
+            <>
+              <Loading loading={loading} />
+            </>
+          ) : (
+            <>
+              {bids.map((el, index) => (
+                <tr key={index}>
+                  <th>
+                    {el?.Client.name} {el?.Client.lastName}
+                  </th>
+                  <td>{formatDateTime(el.updatedAt)}</td>
+
+                  <td>{bids[index]?.bidAmount}$</td>
+                </tr>
+              ))}
+            </>
+          )}
           <tr>
             <th>Auction End</th>
             <td>{formatDateTime(items[0].timeEnd)}</td>
