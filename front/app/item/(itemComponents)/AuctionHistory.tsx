@@ -91,7 +91,7 @@ function AuctionHistory({ items }) {
               {new Date(items[0].timeEnd) > new Date()
                 ? "still not finished"
                 : items.length > 0
-                ? items[items.length - 1]?.bidAmount
+                ? items[0].bids[items[0].bids.length - 1].bidAmount
                 : "No bids yet"}
             </td>
           </tr>
