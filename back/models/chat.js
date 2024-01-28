@@ -1,17 +1,26 @@
+// chat.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
-const Chat = sequelize.define("chat", {
+const Chat = sequelize.define(
+  "Chat",
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      message: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
 
-},{
-    tableName: "chat"  })
-module.exports=Chat
+    message: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    timestamp: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  { timestamps: false, tableName: "chat" }
+);
+
+module.exports = Chat;

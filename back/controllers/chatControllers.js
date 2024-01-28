@@ -1,17 +1,18 @@
 const Chat = require("../models/chat");
+const Items = require("../models/items");
+const Seller = require("../models/sellers");
+const { Op } = require("sequelize");
 
 const chatController = {
   sendMessage: async (req, res) => {
-    const { senderId, receiverId, message } = req.body;
+    const { ClientId, sellerId, message } = req.body;
 
     try {
       const chat = await Chat.create({
-        senderId,
-        receiverId,
+        ClientId,
+        sellerId,
         message,
       });
-
-      // You can broadcast the new message to the respective users or emit a socket event
 
       res.status(200).json({ message: "Message sent successfully.", chat });
     } catch (error) {
@@ -27,12 +28,15 @@ const chatController = {
     const { senderId, receiverId } = req.params;
 
     try {
-      const messages = await Chat.find({
-        $or: [
-          { senderId, receiverId },
-          { senderId: receiverId, receiverId: senderId },
-        ],
-      }).sort({ timestamp: "asc" });
+      const messages = await Chat.findAll({
+        where: {
+          [Op.or]: [
+            { senderId: senderId, receiverId: receiverId },
+            { senderId: receiverId, receiverId: senderId },
+          ],
+        },
+        order: [["timestamp", "ASC"]],
+      });
 
       res.status(200).json(messages);
     } catch (error) {
@@ -43,6 +47,21 @@ const chatController = {
       });
     }
   },
-};
 
+  getAllMessages: async (req, res) => {
+    try {
+      const messages = await Chat.findAll({
+        order: [["timestamp", "ASC"]],
+      });
+
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error in getAllMessages:", error);
+      res.status(500).json({
+        message: `Internal server error: ${error.message}`,
+        error: error.stack,
+      });
+    }
+  },
+};
 module.exports = chatController;

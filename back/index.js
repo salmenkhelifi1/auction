@@ -26,19 +26,11 @@ const ProductsRouter = require("./routes/products");
 const sellerRouter = require("./routes/seller");
 const PaymentRouting = require("./routes/AdminPayemnt");
 const memRouter = require("./routes/memberships");
-const bidRouter = require("./routes/bidRouter");
 
 const app = express();
 const userSocketMap = new Map();
 const corsOptions = {
   origin: function (origin, callback) {
-    // console.log(origin);
-
-    // if (whitelist.indexOf(origin) !== -1) {
-    //   callback(null, true);
-    // } else {
-    //   callback(new Error("Not allowed by CORS"));
-    // }
     callback(null, true);
   },
   credentials: true,
@@ -56,48 +48,7 @@ storeItemMap.set("item1", { id: "item1", name: "basic", priceInDt: 100 });
 storeItemMap.set("item2", { id: "item2", name: "vip", priceInDt: 100 });
 storeItemMap.set("item3", { id: "item3", name: "basic", priceInDt: 100 });
 storeItemMap.set("item4", { id: "item4", name: "vip", priceInDt: 100 });
-// Add more store items as needed
-////
-// app.get("/bidNotification", async (req, res) => {
-//   try {
-//     sendMessageToUser(3, JSON.stringify(bidData));
-//     console.log(JSON.stringify(bidData), "bidData##########");
-//     return res.json({ bidData });
-//   } catch (e) {
-//     console.error(e.message);
-//     res.status(500).json({ error: e.message });
-//   }
-// });
-/////////////
 
-app.get("/bidNotification/:id", async (req, res) => {
-  try {
-    const lastBid = await Bid.findOne({
-      attributes: ["bidAmount", "createdAt"],
-      include: {
-        model: Client,
-        attributes: ["name"],
-      },
-      order: [["createdAt", "DESC"]],
-    });
-
-    if (lastBid) {
-      const bidAmount = parseInt(lastBid.bidAmount, 10);
-
-      sendMessageToRoom(parseInt(req.params.id), bidAmount.toString());
-      console.log(bidAmount, "bidAmount##########");
-      return res.json(bidAmount);
-    } else {
-      return res.json({ message: "No bids found" });
-    }
-  } catch (e) {
-    console.error(e.message);
-    res.status(500).json({ error: e.message });
-  }
-});
-///
-
-///
 app.post("/create-checkout-session", async (req, res) => {
   try {
     const { id, quantity } = req.body;
@@ -141,7 +92,6 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 app.use("/membership", memRouter);
-app.use("/bid", bidRouter);
 app.use("/dash", dashboard);
 app.use("/seller", sellerRouter);
 app.use("/client", clientRoutes);
@@ -150,6 +100,15 @@ app.use("/products", ProductsRouter);
 app.use("/items", itemsRoute);
 app.use("/flousi", PaymentRouting);
 app.use("/cloudinary", cloudRoute);
+// Use the bid and the chat routes
+
+const chatRoutes = require("./routes/chatRoutes");
+const bidRouter = require("./routes/bidRouter")(app);
+
+app.use("/bid", bidRouter);
+app.use("/chat", chatRoutes);
+// End the Use the bid and the chat routes
+
 app.get("/getallusers", async (req, res) => {
   let d = await Client.findAll();
   let s = await Seller.findAll();
@@ -163,6 +122,7 @@ const io = new Server(server, {
 });
 
 app.use(cors(corsOptions));
+app.set("socketio", io);
 io.on("connection", (socket) => {
   const userId = +socket.handshake.query.userId;
   const itemsId = +socket.handshake.query.itemsId;
@@ -188,7 +148,12 @@ io.on("connection", (socket) => {
     // Join the new room
     socket.join(room);
   });
-
+  // Additional logic for chat
+  socket.on("sendMessage", (message) => {
+    console.log(message, "Message received");
+    socket.broadcast.emit("receiveMessage", message);
+  });
+  // Additional logic for bid
   socket.on("placeBid", (message) => {
     console.log(message, "messegeeeeee");
     socket.broadcast.emit("placedBid", message);
@@ -211,34 +176,3 @@ io.on("connection", (socket) => {
     userSocketMap.delete(userId);
   });
 });
-function sendMessageToRoom(roomId, message) {
-  const roomSocket = io.in(roomId);
-
-  if (roomSocket) {
-    console.log("Sending message to room ", roomId);
-    roomSocket.emit("notification", message);
-  } else {
-    console.log(roomId, " does not exist");
-  }
-}
-
-function sendMessageToUser(userId, message) {
-  let userSocket = null;
-  console.log(userSocketMap, "userSocketMap");
-  if (userId?.id) {
-    userSocket = userSocketMap.get(userId.id);
-  } else {
-    userSocket = userSocketMap.get(userId);
-  }
-  if (userSocket) {
-    console.log("sending message to user ", userId);
-
-    userSocket.emit("notification", message);
-  } else {
-    console.log(userId, " do not exist");
-  }
-}
-module.exports = {
-  sendMessageToUser: sendMessageToUser,
-  sendMessageToRoom: sendMessageToRoom,
-};
