@@ -9,7 +9,7 @@ function AuctionHistory({ items }) {
   const [bids, setBids] = useState([]);
   const [page, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  console.log("loading", loading);
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -89,7 +89,7 @@ function AuctionHistory({ items }) {
               {new Date(items[0].timeEnd) > new Date()
                 ? "still not finished"
                 : items.length > 0
-                ? items[0].bids[items[0].bids.length - 1].bidAmount
+                ? items[0].bids[items[0].bids.length - 1]?.bidAmount
                 : "No bids yet"}
             </td>
           </tr>

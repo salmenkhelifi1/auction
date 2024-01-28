@@ -1,6 +1,7 @@
 const Chat = require("../models/chat");
 const Items = require("../models/items");
 const Seller = require("../models/sellers");
+const Client = require("../models/clients");
 const { Op } = require("sequelize");
 
 const chatController = {
@@ -25,14 +26,14 @@ const chatController = {
   },
 
   getMessages: async (req, res) => {
-    const { senderId, receiverId } = req.params;
+    const { ClientId, sellerId } = req.params;
 
     try {
       const messages = await Chat.findAll({
         where: {
           [Op.or]: [
-            { senderId: senderId, receiverId: receiverId },
-            { senderId: receiverId, receiverId: senderId },
+            { ClientId: ClientId, sellerId: sellerId },
+            { ClientId: sellerId, sellerId: ClientId },
           ],
         },
         order: [["timestamp", "ASC"]],

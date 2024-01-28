@@ -21,7 +21,9 @@ const ItemBid = ({ items }) => {
   const soundUrl =
     "https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=short-success-sound-glockenspiel-treasure-video-game-6346.mp3";
 
-  const userId = localStorage.getItem("userId");
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+
   useEffect(() => {
     // Function to handle new bids from others
     const handleNewBidFromOthers = (data) => {
@@ -62,8 +64,6 @@ const ItemBid = ({ items }) => {
       socket.off("placeBid", handleNewBidFromOthers);
     };
   }, [items]);
-
-  console.log("####quant#####", quant);
 
   useEffect(() => {
     if (isPopupVisible) {
@@ -145,7 +145,6 @@ const ItemBid = ({ items }) => {
 
     // Set up socket event listener for placedBid
     socket.on("placedBid", (data) => {
-      console.log(data, "2222222222222222222");
       setQuant(data.bidAmount);
     });
 

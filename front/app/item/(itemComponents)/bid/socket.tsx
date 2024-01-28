@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
-const userId = localStorage.getItem("userId");
+const userId =
+  typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
 const socket = io("http://localhost:5000", {
   transports: ["websocket"],

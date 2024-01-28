@@ -16,7 +16,6 @@ import axios from "axios";
 import Chat from "../../chat/client/chat";
 
 const Item = ({ params }) => {
-  console.log(params);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
