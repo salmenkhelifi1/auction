@@ -121,7 +121,7 @@ const ItemBid = ({ items }) => {
       }
 
       const bidNotificationResponse = await fetch(
-        `http://localhost:5000/bidNotification/${items[0].id}`,
+        `http://localhost:5000/bid/bidNotification/${items[0].id}`,
         {
           method: "GET",
           headers: {

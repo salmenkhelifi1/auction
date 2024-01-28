@@ -2,6 +2,8 @@
 const Bid = require("../models/bid");
 const Item = require("../models/items");
 const Client = require("../models/clients");
+const { sendMessageToRoom } = require("../utils/notificationUtils");
+
 const bidController = {
   placeBid: async (req, res) => {
     const { userId, itemId, bidAmount } = req.body;
@@ -144,6 +146,33 @@ const bidController = {
     } catch (err) {
       console.error(err);
       res.status(500).json("Internal server error");
+    }
+  },
+  getBidNotification: async (req, res) => {
+    try {
+      const io = req.app.get("socketio"); // Get the io instance from the app
+
+      const lastBid = await Bid.findOne({
+        attributes: ["bidAmount", "createdAt"],
+        include: {
+          model: Client,
+          attributes: ["name"],
+        },
+        order: [["createdAt", "DESC"]],
+      });
+
+      if (lastBid) {
+        const bidAmount = parseInt(lastBid.bidAmount, 10);
+
+        sendMessageToRoom(io, parseInt(req.params.id), bidAmount.toString());
+        console.log(bidAmount, "bidAmount##########");
+        return res.json(bidAmount);
+      } else {
+        return res.json({ message: "No bids found" });
+      }
+    } catch (e) {
+      console.error(e.message);
+      res.status(500).json({ error: e.message });
     }
   },
 };
