@@ -18,7 +18,7 @@ import Chat from "../../chat/client/chat";
 const Item = ({ params }) => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isChatboxOpen, setIsChatboxOpen] = useState(true);
+  const [isChatboxOpen, setIsChatboxOpen] = useState(false);
 
   const handleCloseChat = () => {
     // Handle closing chat
@@ -88,7 +88,10 @@ const Item = ({ params }) => {
 
                 <div>
                   <ItemBid items={items} />
-                  <ItemSidebar items={items} />
+                  <ItemSidebar
+                    items={items}
+                    handleToggleChat={handleToggleChat}
+                  />
                 </div>
               </div>
             </div>
@@ -96,11 +99,13 @@ const Item = ({ params }) => {
         </>
       )}
       <>
-        <Chat
-          isChatboxOpen={isChatboxOpen}
-          handleCloseChat={handleCloseChat}
-          handleOpenChat={handleOpenChat}
-        />
+        {isChatboxOpen && (
+          <Chat
+            isChatboxOpen={isChatboxOpen}
+            handleCloseChat={handleCloseChat}
+            handleOpenChat={handleOpenChat}
+          />
+        )}
       </>
     </>
   );

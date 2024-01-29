@@ -13,7 +13,7 @@ import { FaCircleArrowLeft } from "react-icons/fa6";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
 import axios from "axios";
-const ItemSidebar = ({ items }) => {
+const ItemSidebar = ({ items, handleToggleChat }) => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -68,7 +68,9 @@ const ItemSidebar = ({ items }) => {
       return "Auction ended";
     }
   };
-
+  const handleSendMessage = () => {
+    handleToggleChat();
+  };
   return (
     <>
       <div>
@@ -104,11 +106,12 @@ const ItemSidebar = ({ items }) => {
 
               <div className="bid flex justify-center flex-wrap ml-px">
                 <button
+                  onClick={handleSendMessage}
                   type=""
                   className="w-80 m-px  bg-red-500 text-white text-sm leading-6 font-bold py-2 px-4 rounded-lg hover:bg-red-700"
                 >
                   <MdMessage className="black-icon w-[20px] inline-block  mx-1" />
-                  <Link href="/chat/client/">Send Message</Link>
+                  Send Message
                 </button>
 
                 <button

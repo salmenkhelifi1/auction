@@ -6,7 +6,7 @@ const ChatButton = ({ isChatboxOpen, handleCloseChat, handleOpenChat }) => {
   return (
     <button
       className={`${
-        isChatboxOpen ? "bg-red-500" : "bg-blue-500"
+        isChatboxOpen ? "bg-red-300" : "bg-red-700"
       } text-white px-4 py-2 rounded-full fixed bottom-4 right-4 flex items-center`}
       onClick={isChatboxOpen ? handleCloseChat : handleOpenChat}
     >

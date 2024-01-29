@@ -8,24 +8,21 @@ const ChatHeader = dynamic(() => import("./(chat)/chatHader"));
 const ChatBody = dynamic(() => import("./(chat)/chatBody"));
 const ChatInput = dynamic(() => import("./(chat)/chatInpout"));
 const ChatButton = dynamic(() => import("./(chat)/chatButton"));
+
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
-  // const userId =
-  //   typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  // console.log("userId in the chat", userId);
+  const [messagesResive, setMessagesResive] = useState(null);
 
-  // Function to add a message to the state
   const addMessage = (message) => {
     setMessages([...messages, { text: message, isBot: false }]);
   };
 
-  // Function to handle sending a user message
   const handleSendMessage = async (message) => {
     try {
-      // Send message to the server
-      const ClientId = localStorage.getItem("userId");
-      console.log("ClientId:", ClientId);
+      const clientId = localStorage.getItem("userId");
+      console.log("ClientId:", clientId); // Fix typo in variable name
+
       const response = await fetch("http://localhost:5000/chat/send", {
         method: "POST",
         headers: {
@@ -34,16 +31,14 @@ const ChatPage = () => {
         body: JSON.stringify({
           message,
           timestamp: new Date().toISOString(),
-          ClientId: ClientId, // This is hardcoded
+          ClientId: clientId, // Fix typo in variable name
           sellerId: 2, // Replace with the actual seller ID
         }),
       });
 
       if (response.ok) {
-        // Message sent successfully
         addMessage(message);
       } else {
-        // Handle error
         console.error("Failed to send message");
       }
     } catch (error) {
@@ -52,35 +47,37 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    // Fetch notifications when the component mounts
-    const fetchNotifications = async () => {
+    const fetchMessages = async () => {
       try {
-        const response = await fetch("http://localhost:5000/chat/all");
+        const clientId = localStorage.getItem("userId");
+        const sellerId = 2;
+
+        const response = await fetch(
+          `http://localhost:5000/chat/room/${clientId}/${sellerId}`
+        );
+
         if (response.ok) {
-          const notificationData = await response.json();
-          // Handle the notification data, update state or perform any other actions
-          console.log("Notification data:", notificationData);
+          const messagesData = await response.json();
+          setMessagesResive(messagesData);
+          console.log("Messages data:", messagesData);
         } else {
-          console.error("Failed to fetch notifications");
+          console.error("Failed to fetch messages");
         }
       } catch (error) {
-        console.error("Error while fetching notifications:", error);
+        console.error("Error while fetching messages:", error);
       }
     };
 
-    fetchNotifications(); // Call the function when the component mounts
+    fetchMessages();
 
-    // Set up socket event listeners
-    socket.on("newMessage", (data) => {
-      // Handle new messages from others
+    socket.on("send", (data) => {
       addMessage(data.message);
     });
 
-    // Clean up socket event listener on component unmount
     return () => {
-      socket.off("newMessage");
+      socket.off("send");
     };
-  }, []); // Empty dependency array ensures this effect runs only once
+  }, [setMessages]);
 
   const handleCloseChat = () => {
     setIsChatboxOpen(false);
@@ -105,7 +102,7 @@ const ChatPage = () => {
       >
         <div className="bg-white shadow-md rounded-lg max-w-lg w-full">
           <ChatHeader onClose={handleCloseChat} onToggle={handleToggleChat} />
-          <ChatBody messages={messages} />
+          <ChatBody messages={messages} messagesResive={messagesResive} />
           <ChatInput onSend={handleSendMessage} />
         </div>
       </div>
