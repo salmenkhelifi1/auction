@@ -193,11 +193,14 @@ const getSellerMessages = async (req, res) => {
     const messages = await Chat.findAll({
       where: { SellerId: sellerId },
       include: [Seller, Client],
+      order: [["createdAt", "DESC"]],
     });
 
     const formattedMessages = messages.map((message) => ({
+      key: message.id,
       text: message.sellerMessage, // Adjust property based on your model
       isSeller: true, // Assuming seller messages are indicated as such
+      timestamp: message.createdAt, // Assuming there is a timestamp property
     }));
 
     res.json(formattedMessages);
@@ -213,11 +216,14 @@ const getClientMessages = async (req, res) => {
     const messages = await Chat.findAll({
       where: { ClientId: clientId },
       include: [Seller, Client],
+      order: [["createdAt", "DESC"]],
     });
 
     const formattedMessages = messages.map((message) => ({
+      key: message.id,
       text: message.ClientMessage, // Adjust property based on your model
       isSeller: false, // Assuming client messages are not indicated as seller messages
+      timestamp: message.createdAt, // Assuming there is a timestamp property
     }));
 
     res.json(formattedMessages);
@@ -226,6 +232,7 @@ const getClientMessages = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 module.exports = {
   getSellerMessages,
   getClientMessages,

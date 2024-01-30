@@ -141,6 +141,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
   const [messagesResive, setMessagesResive] = useState(null);
+  console.log("sortesetMessagesResivedMessages", messagesResive);
 
   const addMessage = (message) => {
     setMessages((prevMessages) => [
@@ -178,17 +179,16 @@ const ChatPage = () => {
       console.error("Error while sending message:", error);
     }
   };
-
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const ClientId = localStorage.getItem("userId");
+        const clientId = localStorage.getItem("userId");
         const sellerId = 2;
 
         // Fetch messages from both client and seller endpoints
         const [clientMessagesResponse, sellerMessagesResponse] =
           await Promise.all([
-            fetch(`http://localhost:5000/chat/client/${ClientId}`),
+            fetch(`http://localhost:5000/chat/client/${clientId}`),
             fetch(`http://localhost:5000/chat/seller/${sellerId}`),
           ]);
 
@@ -196,11 +196,32 @@ const ChatPage = () => {
           const clientMessagesData = await clientMessagesResponse.json();
           const sellerMessagesData = await sellerMessagesResponse.json();
 
-          // Merge client and seller messages
-          const mergedMessages = [...clientMessagesData, ...sellerMessagesData];
+          const addKeyToMessages = (messages, prefix) =>
+            messages.map((message, index) => ({
+              ...message,
+              key: `${prefix}_${index}`,
+            }));
 
-          setMessagesResive(mergedMessages);
-          console.log("Messages data:", mergedMessages);
+          const clientMessagesWithKey = addKeyToMessages(
+            clientMessagesData,
+            "client"
+          );
+          const sellerMessagesWithKey = addKeyToMessages(
+            sellerMessagesData,
+            "seller"
+          );
+
+          const mergedMessages = [
+            ...clientMessagesWithKey,
+            ...sellerMessagesWithKey,
+          ];
+
+          const sortedMessages = mergedMessages
+            .filter((message) => message.text !== null)
+            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+          setMessagesResive(sortedMessages);
+          console.log("Messages data:", sortedMessages);
         } else {
           console.error("Failed to fetch messages");
         }
