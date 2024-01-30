@@ -11,16 +11,20 @@ const Chat = sequelize.define(
       autoIncrement: true,
     },
 
-    message: {
+    sellerMessage: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    ClientMessage: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     timestamp: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
   },
-  { timestamps: false, tableName: "chat" }
+  { timestamps: true, tableName: "chat" }
 );
 
 module.exports = Chat;

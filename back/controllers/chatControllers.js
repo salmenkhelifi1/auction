@@ -1,68 +1,234 @@
+// const Chat = require("../models/chat");
+// const Items = require("../models/items");
+// const Seller = require("../models/sellers");
+// const Client = require("../models/clients");
+// const { Op } = require("sequelize");
+
+// // Get messages for a specific seller
+// const getSellerMessages = async (req, res) => {
+//   try {
+//     const sellerId = req.params.sellerId;
+//     const messages = await Chat.findAll({
+//       where: { SellerId: sellerId },
+//       include: [Seller, Client],
+//     });
+//     res.json(messages);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Get messages for a specific client
+// const getClientMessages = async (req, res) => {
+//   try {
+//     const ClientId = req.params.ClientId; // Updated variable name
+//     const messages = await Chat.findAll({
+//       where: { ClientId: ClientId },
+//       include: [Seller, Client],
+//     });
+//     res.json(messages);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Send a message from a seller to a client
+// const sendSellerMessage = async (req, res) => {
+//   try {
+//     const { sellerId, ClientId, sellerMessage } = req.body;
+//     console.log(
+//       "################################Received Request - ClientId:",
+//       ClientId
+//     );
+
+//     const newMessage = await Chat.create({
+//       sellerMessage: sellerMessage,
+//       sellerId: sellerId,
+//       ClientId: ClientId,
+//     });
+//     res.json(newMessage);
+//   } catch (error) {
+//     console.error("Error in sendSellerMessage:", error);
+
+//     // Log specific Sequelize validation errors
+//     if (error.name === "SequelizeValidationError") {
+//       console.error("Validation Errors:", error.errors);
+//     }
+
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Send a message from a client to a seller
+// const sendClientMessage = async (req, res) => {
+//   try {
+//     const { sellerId, ClientId, message } = req.body;
+
+//     console.log("Received Request - sendClientMessage:", {
+//       sellerId,
+//       ClientId,
+//       message,
+//     });
+
+//     const newMessage = await Chat.create({
+//       ClientMessage: message,
+//       sellerId: sellerId,
+//       ClientId: ClientId,
+//     });
+
+//     res.json(newMessage);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// module.exports = {
+//   getSellerMessages,
+//   getClientMessages,
+//   sendSellerMessage,
+//   sendClientMessage,
+// };
+
 const Chat = require("../models/chat");
-const Items = require("../models/items");
 const Seller = require("../models/sellers");
 const Client = require("../models/clients");
 const { Op } = require("sequelize");
 
-const chatController = {
-  sendMessage: async (req, res) => {
-    const { ClientId, sellerId, message } = req.body;
+// const getSellerMessages = async (req, res) => {
+//   try {
+//     const sellerId = req.params.sellerId;
+//     const messages = await Chat.findAll({
+//       where: { SellerId: sellerId },
+//       include: [Seller, Client],
+//     });
 
-    try {
-      const chat = await Chat.create({
-        ClientId,
-        sellerId,
-        message,
-      });
+//     const formattedMessages = messages.map((message) => ({
+//       text: message.sellerMessage, // Adjust property based on your model
+//       isSeller: false, // Assuming seller messages are not bot messages
+//     }));
 
-      res.status(200).json({ message: "Message sent successfully.", chat });
-    } catch (error) {
-      console.error("Error in sendMessage:", error);
-      res.status(500).json({
-        message: `Internal server error: ${error.message}`,
-        error: error.stack,
-      });
+//     res.json(formattedMessages);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// const getClientMessages = async (req, res) => {
+//   try {
+//     const clientId = req.params.ClientId;
+//     const messages = await Chat.findAll({
+//       where: { ClientId: clientId },
+//       include: [Seller, Client],
+//     });
+
+//     const formattedMessages = messages.map((message) => ({
+//       text: message.sellerMessage, // Adjust property based on your model
+//       isSeller: false, // Assuming seller messages are not bot messages
+//     }));
+
+//     res.json(formattedMessages);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// Send a message from a seller to a client
+const sendSellerMessage = async (req, res) => {
+  try {
+    const { sellerId, ClientId, sellerMessage } = req.body;
+    console.log(
+      "################################Received Request - ClientId:",
+      ClientId
+    );
+
+    const newMessage = await Chat.create({
+      sellerMessage: sellerMessage,
+      sellerId: sellerId,
+      ClientId: ClientId,
+    });
+    res.json(newMessage);
+  } catch (error) {
+    console.error("Error in sendSellerMessage:", error);
+
+    // Log specific Sequelize validation errors
+    if (error.name === "SequelizeValidationError") {
+      console.error("Validation Errors:", error.errors);
     }
-  },
 
-  getMessages: async (req, res) => {
-    const { ClientId, sellerId } = req.params;
-
-    try {
-      const messages = await Chat.findAll({
-        where: {
-          [Op.or]: [
-            { ClientId: ClientId, sellerId: sellerId },
-            { ClientId: sellerId, sellerId: ClientId },
-          ],
-        },
-        order: [["timestamp", "ASC"]],
-      });
-
-      res.status(200).json(messages);
-    } catch (error) {
-      console.error("Error in getMessages:", error);
-      res.status(500).json({
-        message: `Internal server error: ${error.message}`,
-        error: error.stack,
-      });
-    }
-  },
-
-  getAllMessages: async (req, res) => {
-    try {
-      const messages = await Chat.findAll({
-        order: [["timestamp", "ASC"]],
-      });
-
-      res.status(200).json(messages);
-    } catch (error) {
-      console.error("Error in getAllMessages:", error);
-      res.status(500).json({
-        message: `Internal server error: ${error.message}`,
-        error: error.stack,
-      });
-    }
-  },
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
-module.exports = chatController;
+
+// Send a message from a client to a seller
+const sendClientMessage = async (req, res) => {
+  try {
+    const { sellerId, ClientId, message } = req.body;
+
+    console.log("Received Request - sendClientMessage:", {
+      sellerId,
+      ClientId,
+      message,
+    });
+
+    const newMessage = await Chat.create({
+      ClientMessage: message,
+      sellerId: sellerId,
+      ClientId: ClientId,
+    });
+
+    res.json(newMessage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const getSellerMessages = async (req, res) => {
+  try {
+    const sellerId = req.params.sellerId;
+    const messages = await Chat.findAll({
+      where: { SellerId: sellerId },
+      include: [Seller, Client],
+    });
+
+    const formattedMessages = messages.map((message) => ({
+      text: message.sellerMessage, // Adjust property based on your model
+      isSeller: true, // Assuming seller messages are indicated as such
+    }));
+
+    res.json(formattedMessages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getClientMessages = async (req, res) => {
+  try {
+    const clientId = req.params.ClientId;
+    const messages = await Chat.findAll({
+      where: { ClientId: clientId },
+      include: [Seller, Client],
+    });
+
+    const formattedMessages = messages.map((message) => ({
+      text: message.ClientMessage, // Adjust property based on your model
+      isSeller: false, // Assuming client messages are not indicated as seller messages
+    }));
+
+    res.json(formattedMessages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+module.exports = {
+  getSellerMessages,
+  getClientMessages,
+  sendSellerMessage,
+  sendClientMessage,
+};

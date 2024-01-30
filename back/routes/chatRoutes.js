@@ -2,9 +2,16 @@ const express = require("express");
 const router = express.Router();
 const chatController = require("../controllers/chatControllers");
 
-// Add routes for chat
-router.post("/send", chatController.sendMessage);
-router.get("/room/:senderId/:receiverId", chatController.getMessages);
-router.get("/all", chatController.getAllMessages);
+// Get messages for a specific seller
+router.get("/seller/:sellerId", chatController.getSellerMessages);
+
+// Get messages for a specific client
+router.get("/client/:ClientId", chatController.getClientMessages);
+
+// Send a message from a seller to a client
+router.post("/send-seller-message", chatController.sendSellerMessage);
+
+// Send a message from a client to a seller
+router.post("/send-client-message", chatController.sendClientMessage);
 
 module.exports = router;

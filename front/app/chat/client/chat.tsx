@@ -1,7 +1,135 @@
-// Import necessary dependencies
-import dynamic from "next/dynamic";
+// // Import necessary dependencies
+// import dynamic from "next/dynamic";
+// import { useEffect, useState } from "react";
+// import socket from "../../item/(itemComponents)/bid/socket";
+
+// // Import dynamic components
+// const ChatHeader = dynamic(() => import("./(chat)/chatHader"));
+// const ChatBody = dynamic(() => import("./(chat)/chatBody"));
+// const ChatInput = dynamic(() => import("./(chat)/chatInpout"));
+// const ChatButton = dynamic(() => import("./(chat)/chatButton"));
+
+// const ChatPage = () => {
+//   const [messages, setMessages] = useState([]);
+//   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
+//   const [messagesResive, setMessagesResive] = useState(null);
+
+//   const addMessage = (message) => {
+//     setMessages((prevMessages) => [
+//       ...prevMessages,
+//       { text: message, isBot: false },
+//     ]);
+//   };
+
+//   const handleSendMessage = async (message) => {
+//     try {
+//       const clientId = localStorage.getItem("userId");
+//       console.log("ClientId:", clientId); // Fix variable name
+
+//       const response = await fetch(
+//         "http://localhost:5000/chat/send-client-message",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             message,
+//             timestamp: new Date().toISOString(),
+//             clientId: clientId, // Fix variable name
+//             sellerId: 2, // Replace with the actual seller ID
+//           }),
+//         }
+//       );
+
+//       if (response.ok) {
+//         addMessage(message);
+//       } else {
+//         console.error("Failed to send message");
+//       }
+//     } catch (error) {
+//       console.error("Error while sending message:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchMessages = async () => {
+//       try {
+//         const clientId = localStorage.getItem("userId");
+//         const sellerId = 2;
+
+//         const response = await fetch(
+//           `http://localhost:5000/chat/client/${clientId}`
+//         );
+
+//         if (response.ok) {
+//           const messagesData = await response.json();
+//           setMessagesResive(messagesData);
+//           console.log("Messages data:", messagesData);
+//         } else {
+//           console.error("Failed to fetch messages");
+//         }
+//       } catch (error) {
+//         console.error("Error while fetching messages:", error);
+//       }
+//     };
+
+//     fetchMessages();
+
+//     const receiveMessageHandler = (message) => {
+//       console.log("Received message:", message);
+//       addMessage(message.text);
+//     };
+
+//     // Attach event listener when the component mounts
+//     socket.on("receiveMessage", receiveMessageHandler);
+
+//     // Detach event listener when the component unmounts
+//     return () => {
+//       socket.off("receiveMessage", receiveMessageHandler);
+//     };
+//   }, []);
+
+//   const handleCloseChat = () => {
+//     setIsChatboxOpen(false);
+//   };
+
+//   const handleOpenChat = () => {
+//     setIsChatboxOpen(true);
+//   };
+
+//   const handleToggleChat = () => {
+//     setIsChatboxOpen((prevIsChatboxOpen) => !prevIsChatboxOpen);
+//   };
+
+//   return (
+//     <>
+//       <div
+//         className={
+//           isChatboxOpen
+//             ? "drop-shadow-xl fixed bottom-16 right-4 w-96"
+//             : "hidden"
+//         }
+//       >
+//         <div className="bg-white shadow-md rounded-lg max-w-lg w-full">
+//           <ChatHeader onClose={handleCloseChat} onToggle={handleToggleChat} />
+//           <ChatBody messages={messages} messagesResive={messagesResive} />
+//           <ChatInput onSend={handleSendMessage} />
+//         </div>
+//       </div>
+//       <ChatButton
+//         isChatboxOpen={isChatboxOpen}
+//         handleCloseChat={handleCloseChat}
+//         handleOpenChat={handleOpenChat}
+//       />
+//     </>
+//   );
+// };
+
+// export default ChatPage;
 import { useEffect, useState } from "react";
 import socket from "../../item/(itemComponents)/bid/socket";
+import dynamic from "next/dynamic";
 
 // Import dynamic components
 const ChatHeader = dynamic(() => import("./(chat)/chatHader"));
@@ -15,26 +143,31 @@ const ChatPage = () => {
   const [messagesResive, setMessagesResive] = useState(null);
 
   const addMessage = (message) => {
-    setMessages([...messages, { text: message, isBot: false }]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: message, isBot: false },
+    ]);
   };
 
   const handleSendMessage = async (message) => {
     try {
-      const clientId = localStorage.getItem("userId");
-      console.log("ClientId:", clientId); // Fix typo in variable name
+      const ClientId = localStorage.getItem("userId");
 
-      const response = await fetch("http://localhost:5000/chat/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message,
-          timestamp: new Date().toISOString(),
-          ClientId: clientId, // Fix typo in variable name
-          sellerId: 2, // Replace with the actual seller ID
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/chat/send-client-message",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message,
+            timestamp: new Date().toISOString(),
+            ClientId: ClientId,
+            sellerId: 2, // Replace with the actual seller ID
+          }),
+        }
+      );
 
       if (response.ok) {
         addMessage(message);
@@ -49,17 +182,25 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const clientId = localStorage.getItem("userId");
+        const ClientId = localStorage.getItem("userId");
         const sellerId = 2;
 
-        const response = await fetch(
-          `http://localhost:5000/chat/room/${clientId}/${sellerId}`
-        );
+        // Fetch messages from both client and seller endpoints
+        const [clientMessagesResponse, sellerMessagesResponse] =
+          await Promise.all([
+            fetch(`http://localhost:5000/chat/client/${ClientId}`),
+            fetch(`http://localhost:5000/chat/seller/${sellerId}`),
+          ]);
 
-        if (response.ok) {
-          const messagesData = await response.json();
-          setMessagesResive(messagesData);
-          console.log("Messages data:", messagesData);
+        if (clientMessagesResponse.ok && sellerMessagesResponse.ok) {
+          const clientMessagesData = await clientMessagesResponse.json();
+          const sellerMessagesData = await sellerMessagesResponse.json();
+
+          // Merge client and seller messages
+          const mergedMessages = [...clientMessagesData, ...sellerMessagesData];
+
+          setMessagesResive(mergedMessages);
+          console.log("Messages data:", mergedMessages);
         } else {
           console.error("Failed to fetch messages");
         }
@@ -70,14 +211,19 @@ const ChatPage = () => {
 
     fetchMessages();
 
-    socket.on("send", (data) => {
-      addMessage(data.message);
-    });
-
-    return () => {
-      socket.off("send");
+    const receiveMessageHandler = (message) => {
+      console.log("Received message:", message);
+      addMessage(message.text);
     };
-  }, [setMessages]);
+
+    // Attach event listener when the component mounts
+    socket.on("receiveMessage", receiveMessageHandler);
+
+    // Detach event listener when the component unmounts
+    return () => {
+      socket.off("receiveMessage", receiveMessageHandler);
+    };
+  }, []);
 
   const handleCloseChat = () => {
     setIsChatboxOpen(false);
@@ -88,7 +234,7 @@ const ChatPage = () => {
   };
 
   const handleToggleChat = () => {
-    setIsChatboxOpen(!isChatboxOpen);
+    setIsChatboxOpen((prevIsChatboxOpen) => !prevIsChatboxOpen);
   };
 
   return (
