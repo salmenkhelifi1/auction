@@ -11,7 +11,7 @@ const ChatBody = ({ messages, messagesResive }) => {
     return (
       <div
         key={message.key || new Date().toISOString()}
-        className={`mb-2 ${isSeller ? "..." : "text-right"}`}
+        className={`mb-2 ${isSeller ? "" : "text-right"}`}
       >
         <p
           className={`rounded-lg py-2 px-4 inline-block ${
