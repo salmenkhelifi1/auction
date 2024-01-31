@@ -15,21 +15,13 @@ const ChatInfoPanel = () => {
   // Placeholder data for seller info
   const clientInfo = {
     name: selectedChat?.name || "No chat selected",
-    avatar: selectedChat?.avatar,
+    avatar: selectedChat?.image,
     status: "Online",
     attachments: [
-      "https://i.pinimg.com/originals/e0/a1/7f/e0a17f490d0e7a479b2a38325b269846.jpg",
-      "https://i.pinimg.com/originals/c5/38/46/c53846feb978fe55f6ca633d05a30c7a.jpg",
-
-      "https://i.pinimg.com/originals/e0/a1/7f/e0a17f490d0e7a479b2a38325b269846.jpg",
-      "https://i.pinimg.com/originals/c5/38/46/c53846feb978fe55f6ca633d05a30c7a.jpg",
-      "https://i.pinimg.com/originals/62/98/8e/62988e83f7186961c71d76a914074a5d.jpg",
-      "https://i.pinimg.com/originals/c5/38/46/c53846feb978fe55f6ca633d05a30c7a.jpg",
-
-      "https://i.pinimg.com/originals/e0/97/06/e09706997d1d4dbd52255d6b4cb3d634.jpg",
-      "https://i.pinimg.com/originals/c5/38/46/c53846feb978fe55f6ca633d05a30c7a.jpg",
+      "https://i.pinimg.com/564x/c9/22/68/c92268d92cf2dbf96e3195683d9e14fb.jpg",
     ],
   };
+  console.log("clientInfo", clientInfo);
 
   return (
     <div className=" p-4 border-l  bg-gray-100 h-screen overflow-y-scroll">

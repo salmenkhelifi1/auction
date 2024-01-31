@@ -14,4 +14,6 @@ router.post("/send-seller-message", chatController.sendSellerMessage);
 // Send a message from a client to a seller
 router.post("/send-client-message", chatController.sendClientMessage);
 
+router.get("/all-clients", chatController.getAllClientsFromChat);
+
 module.exports = router;

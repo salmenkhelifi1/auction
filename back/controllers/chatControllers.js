@@ -232,9 +232,42 @@ const getClientMessages = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const getAllClientsFromChat = async (req, res) => {
+  try {
+    const chats = await Chat.findAll({
+      include: [
+        {
+          model: Client,
+          attributes: ["id", "name", "email", "telNumb", "address", "image"],
+        },
+      ],
+    });
 
+    // Use a Set to keep track of unique client IDs
+    const uniqueClientIds = new Set();
+
+    // Filter out duplicate clients and create an array
+    const uniqueClients = chats.reduce((uniqueClients, chat) => {
+      const clientId = chat.Client.id;
+
+      if (!uniqueClientIds.has(clientId)) {
+        uniqueClientIds.add(clientId);
+        uniqueClients.push(chat.Client);
+      }
+
+      return uniqueClients;
+    }, []);
+
+    res.json(uniqueClients);
+  } catch (error) {
+    console.error("Error fetching clients from Chat table:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
   getSellerMessages,
+  getAllClientsFromChat,
+
   getClientMessages,
   sendSellerMessage,
   sendClientMessage,

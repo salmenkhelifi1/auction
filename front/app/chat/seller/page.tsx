@@ -1,33 +1,110 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChatList from "./(seller)/chatList";
 import ChatWindow from "./(seller)/chatWindow";
 // import SellerChatHeader from "./(seller)/sellerChatHeader";
 import ChatInfoPanel from "./(seller)/chatInfoPanel";
 import { ChatProvider } from "./chatContext";
+import socket from "../../item/(itemComponents)/bid/socket";
 
 const ChatSeller = () => {
-  // const [selectedChat, setSelectedChat] = useState(null);
+  const [chats, setChats] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [isChatboxOpen, setIsChatboxOpen] = useState(true);
+  const [messagesResive, setMessagesResive] = useState(null);
+  const addMessage = (message) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: message, isBot: false },
+    ]);
+  };
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const clientId = localStorage.getItem("userId");
+        const sellerId = 2;
 
-  const chats = [
-    { id: 1, name: "zaki zakou" },
-    { id: 2, name: "Kina Mayer" },
-    { id: 3, name: "salmen khelifi" },
-    { id: 4, name: "salim ben selim " },
-    { id: 5, name: "salah hlel " },
-    { id: 6, name: "adib " },
-    { id: 7, name: "Kina Mayer" },
-    { id: 8, name: "salmen khelifi" },
-    { id: 9, name: "salim ben selim " },
-    { id: 10, name: "salah hlel " },
-    { id: 11, name: "adib " },
-  ];
+        // Fetch messages from both client and seller endpoints
+        const [clientMessagesResponse, sellerMessagesResponse] =
+          await Promise.all([
+            fetch(`http://localhost:5000/chat/client/${clientId}`),
+            fetch(`http://localhost:5000/chat/seller/${sellerId}`),
+          ]);
+
+        if (clientMessagesResponse.ok && sellerMessagesResponse.ok) {
+          const clientMessagesData = await clientMessagesResponse.json();
+          const sellerMessagesData = await sellerMessagesResponse.json();
+
+          const addKeyToMessages = (messages, prefix) =>
+            messages.map((message, index) => ({
+              ...message,
+              key: `${prefix}_${index}`,
+            }));
+
+          const clientMessagesWithKey = addKeyToMessages(
+            clientMessagesData,
+            "client"
+          );
+          const sellerMessagesWithKey = addKeyToMessages(
+            sellerMessagesData,
+            "seller"
+          );
+
+          const mergedMessages = [
+            ...clientMessagesWithKey,
+            ...sellerMessagesWithKey,
+          ];
+
+          const sortedMessages = mergedMessages
+            .filter((message) => message.text !== null)
+            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+          setMessagesResive(sortedMessages);
+          console.log("Messages data:", sortedMessages);
+        } else {
+          console.error("Failed to fetch messages");
+        }
+      } catch (error) {
+        console.error("Error while fetching messages:", error);
+      }
+    };
+
+    fetchMessages();
+
+    const receiveMessageHandler = (message) => {
+      console.log("Received message:", message);
+      addMessage(message.text);
+    };
+
+    // Attach event listener when the component mounts
+    socket.on("receiveMessage", receiveMessageHandler);
+
+    // Detach event listener when the component unmounts
+    return () => {
+      socket.off("receiveMessage", receiveMessageHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Fetch data from the server
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/chat/all-clients");
+        const data = await response.json();
+        setChats(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <>
       <ChatProvider>
         <div className="" style={{ height: "100vh", overflow: "hidden" }}>
           <div className="flex relative">
-            <ChatList />
+            <ChatList chats={chats} />
             <ChatWindow />
           </div>
         </div>

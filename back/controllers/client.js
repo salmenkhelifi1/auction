@@ -67,19 +67,34 @@ module.exports = {
       res.status(500).json({ err: "server err" });
     }
   },
-  updateProfileClient:async(req,res)=>{
-    try{
-      const {fname,lname,email,newPass}=req.body
-      let hashed=await bcrypt.hash(newPass,10)
-      let d=Client.update({name:fname,lastName:lname,email,password:hashed},{where:{id:req.params.id}})
-      if(d) return res.status(200).json('updated')
-      return res.status(404).json('not updated')
-
-    }catch(err){
-      res.status(500).json('internal server err')
+  updateProfileClient: async (req, res) => {
+    try {
+      const { fname, lname, email, newPass } = req.body;
+      let hashed = await bcrypt.hash(newPass, 10);
+      let d = Client.update(
+        { name: fname, lastName: lname, email, password: hashed },
+        { where: { id: req.params.id } }
+      );
+      if (d) return res.status(200).json("updated");
+      return res.status(404).json("not updated");
+    } catch (err) {
+      res.status(500).json("internal server err");
     }
+  },
+  getClientById: async (req, res) => {
+    const ClientId = req.params.id;
 
-  }
-  
+    try {
+      const client = await Client.findByPk(ClientId);
+
+      if (!client) {
+        return res.status(404).json({ error: "Client not found" });
+      }
+      res.json(client);
+    } catch (error) {
+      console.error("Error fetching client by ID:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
 };
 // exports.login = functions.https.onRequest(this.login);

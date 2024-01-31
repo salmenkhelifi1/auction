@@ -9,17 +9,49 @@ const ChatInput = ({ selectedChat, onSend }) => {
   const handleInputChange = (e) => {
     setUserMessage(e.target.value);
   };
+  const sendClientMessage = async () => {
+    if (userMessage.trim() !== "") {
+      try {
+        // Your API endpoint and request configuration
+        const response = await fetch(
+          "http://localhost:5000/chat/send-seller-message",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sellerId: "2", // Replace with the actual seller id
+              ClientId: "3", // Replace with the actual client id
+              sellerMessage: userMessage,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Message sent successfully");
+        } else {
+          console.error("Failed to send message");
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+
+      // Optionally, you can reset the input field
+      setUserMessage("");
+    }
+  };
 
   const handleSend = () => {
     if (userMessage.trim() !== "") {
       onSend(userMessage);
-      setUserMessage("");
+      sendClientMessage();
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSend();
+      sendClientMessage();
     }
   };
 
