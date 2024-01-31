@@ -12,78 +12,71 @@ const ChatSeller = () => {
   const [messages, setMessages] = useState([]);
   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
   const [messagesResive, setMessagesResive] = useState(null);
+  const [refrech, setRefrech] = useState(false);
+
+  console.log("clicked", refrech);
+
   const addMessage = (message) => {
     setMessages((prevMessages) => [
       ...prevMessages,
       { text: message, isBot: false },
     ]);
   };
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const clientId = localStorage.getItem("userId");
-        const sellerId = 2;
 
-        // Fetch messages from both client and seller endpoints
-        const [clientMessagesResponse, sellerMessagesResponse] =
-          await Promise.all([
-            fetch(`http://localhost:5000/chat/client/${clientId}`),
-            fetch(`http://localhost:5000/chat/seller/${sellerId}`),
-          ]);
+  const fetchMessages = async () => {
+    try {
+      const clientId = localStorage.getItem("userId");
+      const sellerId = 2;
 
-        if (clientMessagesResponse.ok && sellerMessagesResponse.ok) {
-          const clientMessagesData = await clientMessagesResponse.json();
-          const sellerMessagesData = await sellerMessagesResponse.json();
+      // Fetch messages from both client and seller endpoints
+      const [clientMessagesResponse, sellerMessagesResponse] =
+        await Promise.all([
+          fetch(`http://localhost:5000/chat/client/${clientId}`),
+          fetch(`http://localhost:5000/chat/seller/${sellerId}`),
+        ]);
 
-          const addKeyToMessages = (messages, prefix) =>
-            messages.map((message, index) => ({
-              ...message,
-              key: `${prefix}_${index}`,
-            }));
+      if (clientMessagesResponse.ok && sellerMessagesResponse.ok) {
+        const clientMessagesData = await clientMessagesResponse.json();
+        const sellerMessagesData = await sellerMessagesResponse.json();
 
-          const clientMessagesWithKey = addKeyToMessages(
-            clientMessagesData,
-            "client"
-          );
-          const sellerMessagesWithKey = addKeyToMessages(
-            sellerMessagesData,
-            "seller"
-          );
+        const addKeyToMessages = (messages, prefix) =>
+          messages.map((message, index) => ({
+            ...message,
+            key: `${prefix}_${index}`,
+          }));
 
-          const mergedMessages = [
-            ...clientMessagesWithKey,
-            ...sellerMessagesWithKey,
-          ];
+        const clientMessagesWithKey = addKeyToMessages(
+          clientMessagesData,
+          "client"
+        );
+        const sellerMessagesWithKey = addKeyToMessages(
+          sellerMessagesData,
+          "seller"
+        );
 
-          const sortedMessages = mergedMessages
-            .filter((message) => message.text !== null)
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const mergedMessages = [
+          ...clientMessagesWithKey,
+          ...sellerMessagesWithKey,
+        ];
 
-          setMessagesResive(sortedMessages);
-          console.log("Messages data:", sortedMessages);
-        } else {
-          console.error("Failed to fetch messages");
-        }
-      } catch (error) {
-        console.error("Error while fetching messages:", error);
+        const sortedMessages = mergedMessages
+          .filter((message) => message.text !== null)
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        setMessagesResive(sortedMessages);
+        console.log("Messages data:", sortedMessages);
+      } else {
+        console.error("Failed to fetch messages");
       }
-    };
+    } catch (error) {
+      console.error("Error while fetching messages:", error);
+    }
+  };
 
+  useEffect(() => {
+    // Fetch messages when refrech changes
     fetchMessages();
-
-    const receiveMessageHandler = (message) => {
-      console.log("Received message:", message);
-      addMessage(message.text);
-    };
-
-    // Attach event listener when the component mounts
-    socket.on("receiveMessage", receiveMessageHandler);
-
-    // Detach event listener when the component unmounts
-    return () => {
-      socket.off("receiveMessage", receiveMessageHandler);
-    };
-  }, []);
+  }, [refrech]);
 
   useEffect(() => {
     // Fetch data from the server
@@ -99,13 +92,24 @@ const ChatSeller = () => {
 
     fetchData();
   }, []);
+
+  const clikcount = () => {
+    // Toggle refrech state to trigger the useEffect
+    setRefrech((prevRefrech) => !prevRefrech);
+  };
+
   return (
     <>
       <ChatProvider>
         <div className="" style={{ height: "100vh", overflow: "hidden" }}>
-          <div className="flex relative">
+          <div
+            className="flex relative"
+            onMouseEnter={() => {
+              clikcount();
+            }}
+          >
             <ChatList chats={chats} />
-            <ChatWindow />
+            <ChatWindow messagesResive={messagesResive} />
           </div>
         </div>
       </ChatProvider>

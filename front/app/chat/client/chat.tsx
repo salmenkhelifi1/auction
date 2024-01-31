@@ -141,7 +141,9 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [isChatboxOpen, setIsChatboxOpen] = useState(true);
   const [messagesResive, setMessagesResive] = useState(null);
-  console.log("sortesetMessagesResivedMessages", messagesResive);
+  const [refrech, setRefrech] = useState(false);
+
+  console.log("sortesetMessagesResivedMessages", refrech);
 
   const addMessage = (message) => {
     setMessages((prevMessages) => [
@@ -244,7 +246,7 @@ const ChatPage = () => {
     return () => {
       socket.off("receiveMessage", receiveMessageHandler);
     };
-  }, []);
+  }, [refrech]);
 
   const handleCloseChat = () => {
     setIsChatboxOpen(false);
@@ -258,6 +260,12 @@ const ChatPage = () => {
     setIsChatboxOpen((prevIsChatboxOpen) => !prevIsChatboxOpen);
   };
 
+  const clikcount = () => {
+    // Toggle refrech state to trigger the useEffect
+    setRefrech((prevRefrech) => !prevRefrech);
+  };
+  console.log("clikcount", clikcount);
+
   return (
     <>
       <div
@@ -267,7 +275,12 @@ const ChatPage = () => {
             : "hidden"
         }
       >
-        <div className="bg-white shadow-md rounded-lg max-w-lg w-full">
+        <div
+          className="bg-white shadow-md rounded-lg max-w-lg w-full"
+          onMouseEnter={() => {
+            clikcount();
+          }}
+        >
           <ChatHeader onClose={handleCloseChat} onToggle={handleToggleChat} />
           <ChatBody messages={messages} messagesResive={messagesResive} />
           <ChatInput onSend={handleSendMessage} />

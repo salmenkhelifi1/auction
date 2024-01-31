@@ -6,6 +6,7 @@ const nextConfig = {
       "autobid.modeltheme.com",
       "carauctionnetwork.com",
       "scontent.ftun8-1.fna.fbcdn.net",
+      "res.cloudinary.com",
     ],
   },
 };

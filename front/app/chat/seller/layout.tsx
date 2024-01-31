@@ -8,9 +8,6 @@ import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 const Layout = ({ children }) => {
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
       <div>
         <main>{children}</main>
         <ProgressBar

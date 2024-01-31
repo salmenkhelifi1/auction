@@ -7,8 +7,7 @@ import MessageList from "./messageList";
 import { useChat } from "../chatContext";
 import ChatInfoPanel from "./chatInfoPanel";
 
-const ChatInput = dynamic(() => import("./chatInpout"));
-const ChatWindow = () => {
+const ChatWindow = ({ messagesResive }) => {
   const { selectedChat, chatMessages, addMessageToRoom } = useChat();
 
   const [infoPanelVisible, setInfoPanelVisible] = useState(false);
@@ -16,16 +15,7 @@ const ChatWindow = () => {
     <TbMenu2 className="text-red-500 h-11 w-11 absolute z-50 right-4" />
   );
 
-  const handleSendMessage = (message) => {
-    const roomId = selectedChat.id;
-    const newMessage = {
-      id: chatMessages[roomId].length + 1,
-      roomId,
-      text: message,
-      sender: "Lina Dry",
-    };
-    addMessageToRoom(newMessage);
-  };
+  
 
   const handleToggleInfoPanel = () => {
     setInfoPanelVisible((prevVisible) => !prevVisible);
@@ -69,8 +59,7 @@ const ChatWindow = () => {
       <div className="flex">
         <div className="flex-1">
           <ChatHeader chat={selectedChat} />
-          <MessageList chat={selectedChat} />
-          <ChatInput onSend={handleSendMessage} />
+          <MessageList chat={selectedChat} messagesResive={messagesResive} />
         </div>
 
         {infoPanelVisible && (
