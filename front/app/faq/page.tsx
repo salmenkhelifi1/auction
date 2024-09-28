@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import "./faq.css";
-import Footer from "../footer/Footer.tsx";
-import Navbar from "../home/navbar.tsx";
+
 interface AccordionItem {
   id: number;
   title: string;
@@ -72,7 +71,6 @@ const FAQ: React.FC = () => {
   return (
     <div>
       {" "}
-      <Navbar />
       <div className="container">
         <div className="content_cart">
           <div className="cartt">

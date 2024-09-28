@@ -901,7 +901,7 @@ const filter2=(property:any,value:any)=>{
             <div style={{background:`url(${el.images[0]})`,backgroundSize:'cover'}}  className='w-full h-[190px]  rounded-t-3xl overflow-hidden'>
             <div className="flex justify-between mt-[56%]">
             <div>
-                <h1 className="text-white font-[700]">{Math.floor((new Date()-new Date(el.timeEnd)<0?new Date(el.timeEnd)-new Date():0)/3600000)}H</h1>
+                <h1 className="text-white font-[700]">{Math.floor((new Date().getTime() - new Date(el.timeEnd).getTime() < 0 ? new Date(el.timeEnd).getTime() - new Date().getTime() : 0) / 3600000)}H</h1>
             </div>
             <div className="flex justify-center items-center  w-[30px] h-[30px] rounded-[5px] hover:bg-[#ff2800]  transition-all">
             <Link href={`/item/${el.id}`}> <FaHammer   size={25} className='text-white cursor-pointer'
@@ -929,7 +929,7 @@ const filter2=(property:any,value:any)=>{
         className="w-[313px] h-full rounded-l-[10px] inline-block "
         style={{background:`url(${el.images[0]})`,backgroundSize:'cover'}}>
             <div className="flex justify-center items-center rounded-[10px] w-[100px] h-[40px]  ml-[5%]  backdrop-blur-[50px]	text-white">
-                <h1 >{Math.floor((new Date()-new Date(el.timeEnd)<0?new Date(el.timeEnd)-new Date():0)/3600000)}H</h1>
+                <h1 >{Math.floor((new Date().getTime() - new Date(el.timeEnd).getTime() < 0 ? new Date(el.timeEnd).getTime() - new Date().getTime() : 0) / 3600000)}H</h1>
                 </div>
         </div>
         <div className="mt-[5%] ml-[5%]">

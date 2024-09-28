@@ -13,7 +13,6 @@ const ItemDescrption = dynamic(
 );
 const ItemSidebar = dynamic(() => import("../(itemComponents)/itemSidebar"));
 import axios from "axios";
-import Chat from "../../chat/client/chat";
 
 const Item = ({ params }) => {
   const [items, setItems] = useState<Item[]>([]);
@@ -98,15 +97,7 @@ const Item = ({ params }) => {
           </div>
         </>
       )}
-      <>
-        {isChatboxOpen && (
-          <Chat
-            isChatboxOpen={isChatboxOpen}
-            handleCloseChat={handleCloseChat}
-            handleOpenChat={handleOpenChat}
-          />
-        )}
-      </>
+      <></>
     </>
   );
 };

@@ -40,8 +40,12 @@ const ItemDescription = ({ items }) => {
           <Accordion
             open={open === item.id}
             icon={<Icon id={item.id} open={open} />}
+            placeholder="Accordion Placeholder"
           >
-            <AccordionHeader onClick={() => handleOpen(item.id)}>
+            <AccordionHeader
+              onClick={() => handleOpen(item.id)}
+              placeholder="Accordion Placeholder"
+            >
               Description
             </AccordionHeader>
             <AccordionBody className="list-disc">

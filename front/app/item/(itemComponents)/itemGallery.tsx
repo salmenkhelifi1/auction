@@ -3,6 +3,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import "./style/itemGallery.css";
 
+interface GalleryProps {
+  items: { id: number; images: string[] }[];
+}
+
 const Gallery: React.FC<GalleryProps> = ({ items }) => {
   const [currentImage, setCurrentImage] = useState(items[0]?.images[0] || "");
 

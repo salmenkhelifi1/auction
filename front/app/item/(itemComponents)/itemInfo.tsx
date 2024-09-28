@@ -3,7 +3,21 @@ import React from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { fas } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTruckPickup,
+  faThermometerQuarter,
+  faGasPump,
+  faDoorClosed,
+  faRecycle,
+  faParking,
+  faUserShield,
+  faPalette,
+  faTachometerAlt,
+  faStopCircle,
+  faCarBattery,
+  faChair,
+  fas,
+} from "@fortawesome/free-solid-svg-icons";
 import "./style/itemInfo.css";
 library.add(fas);
 import {
@@ -44,8 +58,12 @@ const ItemInfo = ({ items }) => {
         <div key={item.id}>
           <br />
           <br />
-          <Accordion open={open === 0} icon={<Icon id={1} open={open} />}>
-            <AccordionHeader onClick={() => handleOpen(1)}>
+          <Accordion
+            open={open === 0}
+            icon={<Icon id={1} open={open} />}
+            placeholder=""
+          >
+            <AccordionHeader onClick={() => handleOpen(1)} placeholder="">
               Additional Information{" "}
             </AccordionHeader>
             <AccordionBody>
@@ -60,7 +78,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-truck-pickup"
+                              icon={faTruckPickup}
                               className="h-6 w-6 red-icon  float-start mx-1 "
                             />
                             <p className="text-lg font-semibold mb-2">Body</p>
@@ -76,7 +94,7 @@ const ItemInfo = ({ items }) => {
                           {" "}
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-thermometer-quarter"
+                              icon={faThermometerQuarter}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -93,7 +111,7 @@ const ItemInfo = ({ items }) => {
                           {" "}
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-gas-pump"
+                              icon={faGasPump}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -110,7 +128,7 @@ const ItemInfo = ({ items }) => {
                           {" "}
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-door-closed"
+                              icon={faDoorClosed}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -124,7 +142,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="as fa-recycle"
+                              icon={faRecycle}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -138,7 +156,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-parking"
+                              icon={faParking}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -157,7 +175,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-user-shield"
+                              icon={faUserShield}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -171,7 +189,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-palette"
+                              icon={faPalette}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">Color</p>
@@ -183,7 +201,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-tachometer-alt"
+                              icon={faTachometerAlt}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -197,7 +215,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-stop-circle"
+                              icon={faStopCircle}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -211,7 +229,7 @@ const ItemInfo = ({ items }) => {
                         <th className="  ">
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-door-closed"
+                              icon={faChair}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">
@@ -226,7 +244,7 @@ const ItemInfo = ({ items }) => {
                         <th>
                           <p>
                             <FontAwesomeIcon
-                              icon="fas fa-car-battery"
+                              icon={faCarBattery}
                               className="red-icon h-6 w-6 float-start mx-1"
                             />
                             <p className="text-lg font-semibold mb-2">Power</p>
@@ -243,18 +261,14 @@ const ItemInfo = ({ items }) => {
           <hr />
           <hr />
           <hr />
-          <Accordion open={open === 2} icon={<Icon id={2} open={open} />}>
+          <Accordion
+            open={open === 2}
+            icon={<Icon id={2} open={open} />}
+            placeholder=""
+          >
             <AccordionHeader onClick={() => handleOpen(2)} placeholder="">
               Auction History{" "}
             </AccordionHeader>
-            <AccordionBody>
-              <AuctionHistory
-                items={items}
-                timeStart={item.timeStart}
-                price={item.price}
-                timeEnd={item.timeEnd}
-              />
-            </AccordionBody>
           </Accordion>
           <hr />
           <hr />{" "}

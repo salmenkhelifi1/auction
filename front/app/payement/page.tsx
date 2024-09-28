@@ -1,13 +1,15 @@
-import React from 'react'
-import Strip from '../payement/stripe'
-import Flouci from '../payement/flouci'
+"use client";
+import React from "react";
+import Strip from "../payement/stripe";
+import Flouci from "../payement/flouci";
+
 const payment = () => {
   return (
     <div>
-      <Flouci/>
-      <Strip/>
+      <Flouci />
+      <Strip />
     </div>
-  )
-}
+  );
+};
 
-export default payment
+export default payment;

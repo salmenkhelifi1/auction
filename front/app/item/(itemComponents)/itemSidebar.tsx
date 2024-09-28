@@ -46,7 +46,7 @@ const ItemSidebar = ({ items, handleToggleChat }) => {
   const calculateRemainingTime = (endDate) => {
     const currentDate = new Date();
     const auctionEndDate = new Date(endDate);
-    const timeDifference = auctionEndDate - currentDate;
+    const timeDifference = auctionEndDate.getTime() - currentDate.getTime();
 
     if (timeDifference > 0) {
       const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -107,7 +107,6 @@ const ItemSidebar = ({ items, handleToggleChat }) => {
               <div className="bid flex justify-center flex-wrap ml-px">
                 <button
                   onClick={handleSendMessage}
-                  type=""
                   className="w-80 m-px  bg-red-500 text-white text-sm leading-6 font-bold py-2 px-4 rounded-lg hover:bg-red-700"
                 >
                   <MdMessage className="black-icon w-[20px] inline-block  mx-1" />
@@ -115,7 +114,6 @@ const ItemSidebar = ({ items, handleToggleChat }) => {
                 </button>
 
                 <button
-                  type=""
                   className="w-80 m-px    text-sm leading-6 font-bold py-2 px-4 rounded-lg   text-white  mt-[1%] bg-red-500  h-[43px] float-right hover:text-black hover:bg-white
               hover:border-[2px] hover:border-black 
               hover:h-[47px] hover:transition ease-in-out delay-50 "
@@ -161,7 +159,6 @@ const ItemSidebar = ({ items, handleToggleChat }) => {
                 >
                   <Link href={`/item/${el.id}`}>
                     <button
-                      type=""
                       className="bidIcon font-bold  object-center   text-white text-sm leading-6  py-2 px-4 rounded-lg hover:bg-red-700 "
                     >
                       <FaHammer

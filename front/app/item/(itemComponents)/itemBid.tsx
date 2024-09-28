@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import "./style/itemBid.css";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { store } from "react-notifications-component";
+import { Store } from "react-notifications-component";
 import Sound from "react-sound";
 import AuctionTimer from "./auctionTimer";
 import socket from "./bid/socket";

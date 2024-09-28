@@ -1,5 +1,5 @@
 {
-  "$schema": "./https://json.schemastore.org/package/to/package-schema.json",
+  "$schema": "https://json.schemastore.org/package",
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
@@ -50,6 +50,7 @@
     "react-icons": "^4.12.0",
     "react-notifications-component": "^4.0.1",
     "react-sound": "^1.2.0",
+    "sharp": "^0.33.5",
     "socket.io-client": "^4.7.4",
     "styled-components": "^6.1.6",
     "tailwind-scrollbar": "^3.0.5",
